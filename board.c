@@ -6,6 +6,7 @@
 #define ROW_NEXT        2
 #define COL_NEXT        4
 
+#define ESC             '\x1b'
 #define CLEAR_SCREEN    "\x1b[2J"
 #define HOME            "\x1b[H"
 
@@ -40,7 +41,7 @@ static void draw_line()
     for (i = 0; i < NUM_LETTERS; i++) {
         fputs("---+", stdout);
     }
-    fputs("\r\n", stdout);
+    fputs("\n", stdout);
 }
 
 static void draw_row()
@@ -51,7 +52,7 @@ static void draw_row()
     for (i = 0; i < NUM_LETTERS; i++) {
         fputs("   |", stdout);
     }
-    fputs("\r\n", stdout);
+    fputs("\n", stdout);
 }
 
 void draw_board()
@@ -72,6 +73,7 @@ void get_guess(int index)
     int i;
     int ch;
     bool done;
+    bool escape;
 
     row = ROW_ORIGIN;
     col = COL_ORIGIN;
@@ -84,13 +86,39 @@ void get_guess(int index)
 
     guess_col = 0;
     done = false;
+    escape = false;
 
     while (!done) {
         set_cursor(row, col);
 
         ch = getch_no_echo();
 
-        if ((ch == '\r') || (ch == '\n')) {
+        if (escape) {
+            if ((ch != '[') && (ch != 'O')) {
+                if (ch == 'C') {
+                    // right arrow
+                    if (guess_col < (NUM_LETTERS - 1)) {
+                        guess_col++;
+                        col += COL_NEXT;
+                        set_cursor(row, col);
+                    }
+                }
+                else if (ch == 'D') {
+                    // left arrow
+                    if (guess_col > 0) {
+                        guess_col--;
+                        col -= COL_NEXT;
+                        set_cursor(row, col);
+                    }
+                }
+
+                escape = false;
+            }
+        }
+        else if (ch == ESC) {
+            escape = true;
+        }
+        else if ((ch == '\r') || (ch == '\n')) {
             if (guess_col == NUM_LETTERS) {
                 guess[guess_col] = '\0';
                 done = true;
@@ -178,12 +206,12 @@ bool replay(bool won)
     set_cursor(row, col);
 
     if (won) {
-        fputs("Congratulations!\r\n", stdout);
+        fputs("Congratulations!\n", stdout);
     }
     else {
         fputs("Sorry, it was '", stdout);
         fputs(word, stdout);
-        fputs("'.\r\n", stdout);
+        fputs("'.\n", stdout);
     }
 
     fputs("Play again (Y/N)? ", stdout);
@@ -202,27 +230,27 @@ void show_stats()
     fputs("Games played: ", stdout);
     itoa(num_played, buffer);
     fputs(buffer, stdout);
-    fputs("\r\n", stdout);
+    fputs("\n", stdout);
 
     fputs("Games won: ", stdout);
     itoa(num_won, buffer);
     fputs(buffer, stdout);
-    fputs("\r\n", stdout);
+    fputs("\n", stdout);
 
     percentage = (num_won * 100) / num_played;
 
     fputs("Win Percentage: ", stdout);
     itoa(percentage, buffer);
     fputs(buffer, stdout);
-    fputs("%\r\n", stdout);
+    fputs("%\n", stdout);
 
     fputs("Current Streak: ", stdout);
     itoa(current_streak, buffer);
     fputs(buffer, stdout);
-    fputs("\r\n", stdout);
+    fputs("\n", stdout);
 
     fputs("Max Streak: ", stdout);
     itoa(max_streak, buffer);
     fputs(buffer, stdout);
-    fputs("\r\n", stdout);
+    fputs("\n", stdout);
 }

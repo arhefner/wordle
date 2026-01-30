@@ -123,7 +123,7 @@ static void save_stats(char *name)
     fclose(fp);
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     FILE *words;
     FILE *words_sorted;
