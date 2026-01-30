@@ -125,9 +125,10 @@ static void save_stats(char *name)
 
 int main(int argc, char* argv[])
 {
-    FILE *wordles;
-    FILE *wordles_sorted;
-    FILE *non_wordles;
+    FILE *words;
+    FILE *words_sorted;
+    FILE *answers_a_l;
+    FILE *answers_m_z;
     char *newline_pos;
     bool done;
     bool won;
@@ -156,20 +157,26 @@ int main(int argc, char* argv[])
         max_streak = 0;
     }
 
-    wordles = fopen("wordles.lst", "r");
-    if (wordles == NULL) {
+    words = fopen("wordlist.txt", "r");
+    if (word == NULL) {
         perror("Could not open solution list");
         return 1;
     }
 
-    wordles_sorted = fopen("wordles_sorted.lst", "r");
-    if (wordles_sorted == NULL) {
+    words_sorted = fopen("words_sorted.txt", "r");
+    if (words_sorted == NULL) {
         perror("Could not open sorted solution list");
         return 1;
     }
 
-    non_wordles = fopen("nonwordles.lst", "r");
-    if (wordles == NULL) {
+    answers_a_l = fopen("answers_a-l.txt", "r");
+    if (answers_a_l == NULL) {
+        perror("Could not open valid word list");
+        return 1;
+    }
+
+    answers_m_z = fopen("answers_m-z.txt", "r");
+    if (answers_a_l == NULL) {
         perror("Could not open valid word list");
         return 1;
     }
@@ -181,8 +188,8 @@ int main(int argc, char* argv[])
 
         // Get the next word
         pos = word_index * (NUM_LETTERS + 1);
-        fseek(wordles, pos, SEEK_SET);
-        fgets(word, sizeof(word), wordles);
+        fseek(words, pos, SEEK_SET);
+        fgets(word, sizeof(word), words);
 
         memset(map, 0, sizeof(map));
         pos = 1;
@@ -198,8 +205,9 @@ int main(int argc, char* argv[])
             do {
                 get_guess(i);
 
-                if (find_word(wordles_sorted, guess) ||
-                    find_word(non_wordles, guess)) {
+                if (find_word(words_sorted, guess) ||
+                    ((guess[0] < 'm') && find_word(answers_a_l, guess)) ||
+                    find_word(answers_m_z, guess)) {
                     valid = true;
                 }
                 else {
@@ -252,4 +260,9 @@ int main(int argc, char* argv[])
     show_stats();
 
     save_stats(name);
+
+    fclose(words);
+    fclose(words_sorted);
+    fclose(answers_a_l);
+    fclose(answers_m_z);
 }

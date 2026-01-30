@@ -90,7 +90,7 @@ void get_guess(int index)
 
         ch = getch_no_echo();
 
-        if (ch == '\n') {
+        if ((ch == '\r') || (ch == '\n')) {
             if (guess_col == NUM_LETTERS) {
                 guess[guess_col] = '\0';
                 done = true;
@@ -110,7 +110,7 @@ void get_guess(int index)
             }
         }
         else {
-            if (isalpha(ch)) {
+            if (isalpha(ch) && (guess_col < NUM_LETTERS)) {
                 fputc(toupper(ch), stdout);
                 guess[guess_col++] = tolower(ch);
                 col += COL_NEXT;
@@ -178,7 +178,7 @@ bool replay(bool won)
     set_cursor(row, col);
 
     if (won) {
-        fputs("Congratulations!\n", stdout);
+        fputs("Congratulations!\r\n", stdout);
     }
     else {
         fputs("Sorry, it was '", stdout);
