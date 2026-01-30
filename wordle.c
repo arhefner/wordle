@@ -257,12 +257,12 @@ int main(int argc, char* argv[])
         done = !replay(won);
     }
 
-    show_stats();
-
-    save_stats(name);
-
     fclose(words);
     fclose(words_sorted);
     fclose(answers_a_l);
     fclose(answers_m_z);
+
+    show_stats();
+
+    save_stats(name);
 }
