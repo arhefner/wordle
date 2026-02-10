@@ -82,6 +82,8 @@ void get_guess(int index)
         row += ROW_NEXT;
     }
 
+    guess[NUM_LETTERS] = '\0';
+
     fputs(NORMAL, stdout);
 
     guess_col = 0;
@@ -119,14 +121,7 @@ void get_guess(int index)
             escape = true;
         }
         else if ((ch == '\r') || (ch == '\n')) {
-            if (guess_col == NUM_LETTERS) {
-                guess[guess_col] = '\0';
-                done = true;
-            }
-            else {
-                clear_guess(index);
-                col = COL_ORIGIN;
-            }
+            done = true;
         }
         else if (ch == '\b' || ch == '\x1f' || ch == '\x7f') {
             if (guess_col > 0) {
@@ -161,6 +156,7 @@ void clear_guess(int index)
     fputs(NORMAL, stdout);
 
     for (i = 0; i < NUM_LETTERS; i++) {
+        guess[i] = ' ';
         set_cursor(row, col);
         fputc(' ', stdout);
         col += COL_NEXT;
