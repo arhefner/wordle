@@ -44,7 +44,7 @@ static void draw_line(char *start, char *middle, char *end)
     }
     fputs("\xe2\x94\x80\xe2\x94\x80\xe2\x94\x80", stdout);
     fputs(end, stdout);
-    fputc('\n', stdout);
+    fputs("\r\n", stdout);
 }
 
 static void draw_row(void)
@@ -55,7 +55,7 @@ static void draw_row(void)
     for (i = 0; i < NUM_LETTERS; i++) {
         fputs("   \xe2\x94\x82", stdout);
     }
-    fputc('\n', stdout);
+    fputs("\r\n", stdout);
 }
 
 void draw_board(void)
@@ -209,12 +209,12 @@ bool replay(bool won)
     set_cursor(row, col);
 
     if (won) {
-        fputs("Congratulations!\n", stdout);
+        fputs("Congratulations!\r\n", stdout);
     }
     else {
         fputs("Sorry, it was '", stdout);
         fputs(word, stdout);
-        fputs("'.\n", stdout);
+        fputs("'.\r\n", stdout);
     }
 
     fputs("Play again (Y/N)? ", stdout);
@@ -233,27 +233,27 @@ void show_stats(void)
     fputs("Games played: ", stdout);
     itoa(num_played, buffer);
     fputs(buffer, stdout);
-    fputs("\n", stdout);
+    fputs("\r\n", stdout);
 
     fputs("Games won: ", stdout);
     itoa(num_won, buffer);
     fputs(buffer, stdout);
-    fputs("\n", stdout);
+    fputs("\r\n", stdout);
 
     percentage = (num_won * 100) / num_played;
 
     fputs("Win Percentage: ", stdout);
     itoa(percentage, buffer);
     fputs(buffer, stdout);
-    fputs("%\n", stdout);
+    fputs("%\r\n", stdout);
 
     fputs("Current Streak: ", stdout);
     itoa(current_streak, buffer);
     fputs(buffer, stdout);
-    fputs("\n", stdout);
+    fputs("\r\n", stdout);
 
     fputs("Max Streak: ", stdout);
     itoa(max_streak, buffer);
     fputs(buffer, stdout);
-    fputs("\n", stdout);
+    fputs("\r\n", stdout);
 }
