@@ -226,16 +226,16 @@ void show_stats(void)
     fputs(HOME, stdout);
 
     fputs("Games played: ", stdout);
-    itoa(num_played, buffer);
+    itoa(stats.num_played, buffer);
     fputs(buffer, stdout);
     fputs("\r\n", stdout);
 
     fputs("Games won: ", stdout);
-    itoa(num_won, buffer);
+    itoa(stats.num_won, buffer);
     fputs(buffer, stdout);
     fputs("\r\n", stdout);
 
-    percentage = (num_won * 100) / num_played;
+    percentage = (stats.num_won * 100) / stats.num_played;
 
     fputs("Win Percentage: ", stdout);
     itoa(percentage, buffer);
@@ -243,12 +243,12 @@ void show_stats(void)
     fputs("%\r\n", stdout);
 
     fputs("Current Streak: ", stdout);
-    itoa(current_streak, buffer);
+    itoa(stats.current_streak, buffer);
     fputs(buffer, stdout);
     fputs("\r\n", stdout);
 
     fputs("Max Streak: ", stdout);
-    itoa(max_streak, buffer);
+    itoa(stats.max_streak, buffer);
     fputs(buffer, stdout);
     fputs("\r\n", stdout);
 }

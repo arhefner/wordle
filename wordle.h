@@ -14,15 +14,25 @@
 #define NEAR_MISS           1
 #define MISS                2
 
-extern int word_index;
-extern int num_played;
-extern int num_won;
-extern int current_streak;
-extern int max_streak;
+typedef struct {
+    int word_index;
+    int num_played;
+    int num_won;
+    int current_streak;
+    int max_streak;
+} stat_t;
+
+extern stat_t stats;
 
 extern char word[];
 extern char guess[];
 extern char match[];
+
+extern bool read_stats(char *name);
+extern void save_stats(char *name);
+
+extern int get_word_count(FILE *file);
+extern void get_word(FILE *file, int pos, char *buf);
 
 extern void draw_board(void);
 extern void get_guess(int index);
