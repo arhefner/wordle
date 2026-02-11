@@ -33,7 +33,7 @@ static void set_cursor(int row, int col)
     fputc('H', stdout);
 }
 
-static void draw_line()
+static void draw_line(void)
 {
     int i;
 
@@ -44,7 +44,7 @@ static void draw_line()
     fputs("\n", stdout);
 }
 
-static void draw_row()
+static void draw_row(void)
 {
     int i;
 
@@ -55,7 +55,7 @@ static void draw_row()
     fputs("\n", stdout);
 }
 
-void draw_board()
+void draw_board(void)
 {
     int i;
     fputs(CLEAR_SCREEN, stdout);
@@ -174,14 +174,16 @@ void update_guess(int index)
     }
 
     for (i = 0; i < NUM_LETTERS; i++) {
-        set_cursor(row, col);
+        set_cursor(row, col - 1);
         if (match[i] == HIT) {
             fputs(REVERSE, stdout);
         }
         else if (match[i] == NEAR_MISS) {
             fputs(UNDERLINE, stdout);
         }
+        fputc(' ', stdout);
         fputc(toupper(guess[i]), stdout);
+        fputc(' ', stdout);
         fputs(NORMAL, stdout);
         col += COL_NEXT;
     }
@@ -215,7 +217,7 @@ bool replay(bool won)
     return (toupper(ch) == 'Y');
 }
 
-void show_stats()
+void show_stats(void)
 {
     char buffer[10];
     int percentage;

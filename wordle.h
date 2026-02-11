@@ -24,12 +24,12 @@ extern char word[];
 extern char guess[];
 extern char match[];
 
-extern void draw_board();
+extern void draw_board(void);
 extern void get_guess(int index);
 extern void clear_guess(int index);
 extern void update_guess(int index);
 extern bool replay(bool won);
-extern void show_stats();
+extern void show_stats(void);
 
 bool find_word(FILE* fp, const char* word);
 
