@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define NUM_GUESSES         5
+#define NUM_GUESSES         6
 #define NUM_LETTERS         5
 
 #define MAX_NAME_LEN        48

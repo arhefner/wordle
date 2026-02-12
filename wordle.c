@@ -10,8 +10,9 @@ stat_t stats;
 char word[NUM_LETTERS + 1];
 char guess[NUM_LETTERS + 1];
 
-char map[26];
 char match[NUM_LETTERS];
+
+char test[NUM_LETTERS + 1];
 
 int main(int argc, char *argv[])
 {
@@ -25,6 +26,7 @@ int main(int argc, char *argv[])
     int pos;
     int i;
     int j;
+    int k;
     bool valid;
     char check;
 
@@ -75,13 +77,6 @@ int main(int argc, char *argv[])
         // Get the next word
         get_word(words, stats.word_index, word);
 
-        memset(map, 0, sizeof(map));
-        pos = 1;
-        for (i = 0; i < NUM_LETTERS; i++) {
-            map[word[i] - 'a'] |= pos;
-            pos <<= 1;
-        }
-
         draw_board();
 
         for (i = 0; (i < NUM_GUESSES) && !won; i++) {
@@ -100,24 +95,31 @@ int main(int argc, char *argv[])
                 }
             } while (!valid);
 
-            if (strcmp(guess, word) == 0) {
-                memset(match, HIT, sizeof(match));
-                won = true;
+            strcpy(test, word);
+            memset(match, MISS, NUM_LETTERS);
+            won = true;
+
+            for (j = 0; j < NUM_LETTERS; j++) {
+                if (test[j] == guess[j]) {
+                    match[j] = HIT;
+                    test[j] = 'X';
+                }
+                else {
+                    won = false;
+                }
             }
-            else {
-                pos = 1;
+
+            if (!won) {
                 for (j = 0; j < NUM_LETTERS; j++) {
-                    check = map[guess[j] - 'a'];
-                    if (check == 0) {
-                        match[j] = MISS;
+                    if (match[j] == MISS) {
+                        for (k = 0; k < NUM_LETTERS; k++) {
+                            if (test[k] == guess[j]) {
+                                match[j] = NEAR_MISS;
+                                test[k] = 'X';
+                                break;
+                            }
+                        }
                     }
-                    else if ((check & pos) != 0) {
-                        match[j] = HIT;
-                    }
-                    else {
-                        match[j] = NEAR_MISS;
-                    }
-                    pos <<= 1;
                 }
             }
 
