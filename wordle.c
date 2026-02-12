@@ -40,8 +40,6 @@ int main(int argc, char *argv[])
     }
 
     if (!read_stats(name)) {
-        printf("Stat file failed");
-        getch_no_echo();
         memset(&stats, 0, sizeof(stats));
     }
 

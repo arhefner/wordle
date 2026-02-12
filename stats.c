@@ -42,7 +42,6 @@ bool read_stats(char *name)
 
     // If no stat file was found, return
     if (fd == -1) {
-        printf("No open stats");
         return false;
     }
 
