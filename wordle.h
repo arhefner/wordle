@@ -31,8 +31,8 @@ extern char match[];
 extern bool read_stats(char *name);
 extern void save_stats(char *name);
 
-extern int get_word_count(FILE *file);
-extern void get_word(FILE *file, int pos, char *buf);
+extern int get_word_count(int fd);
+extern void get_word(int fd, int pos, char *buf);
 
 extern void draw_board(void);
 extern void get_guess(int index);
@@ -41,7 +41,7 @@ extern void update_guess(int index);
 extern bool replay(bool won);
 extern void show_stats(void);
 
-bool find_word(FILE* fp, const char* word);
+bool find_word(int fd, const char* word);
 
 extern int getch_no_echo(void);
 

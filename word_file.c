@@ -1,13 +1,13 @@
+#include <unistd.h>
 #include "wordle.h"
 
-int get_word_count(FILE *fp)
+int get_word_count(int fd)
 {
     int file_size;
     int line_size;
 
     // Get file size
-    fseek(fp, 0, SEEK_END);
-    file_size = ftell(fp);
+    file_size = lseek(fd, 0, SEEK_END);
 
     if (file_size <= 0) {
         return -1;
@@ -15,10 +15,11 @@ int get_word_count(FILE *fp)
 
     // Each line is 5 letters + newline = 6 bytes
     line_size = NUM_LETTERS + 1;
+
     return file_size / line_size;
 }
 
-void get_word(FILE *fp, int pos, char *buf)
+void get_word(int fd, int pos, char *buf)
 {
     int offset;
     int bytes_read;
@@ -26,10 +27,10 @@ void get_word(FILE *fp, int pos, char *buf)
     offset = pos * (NUM_LETTERS + 1);
 
     // Read the word at position mid
-    fseek(fp, offset, SEEK_SET);
+    lseek(fd, offset, SEEK_SET);
 
     // Read into buffer
-    bytes_read = fread(buf, 1, NUM_LETTERS, fp);
+    bytes_read = read(fd, buf, NUM_LETTERS);
 
     if (bytes_read < NUM_LETTERS) {
         // Return empty string on error
@@ -40,3 +41,4 @@ void get_word(FILE *fp, int pos, char *buf)
         buf[NUM_LETTERS] = '\0';
     }
 }
+

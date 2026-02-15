@@ -10,7 +10,7 @@
  * @param word Pointer to a 5-letter word to search for
  * @return true if the word is found, false otherwise
  */
-bool find_word(FILE* fp, const char* word)
+bool find_word(int fd, const char* word)
 {
     static char test[NUM_LETTERS + 1];
     int num_words;
@@ -19,12 +19,8 @@ bool find_word(FILE* fp, const char* word)
     int mid;
     int cmp;
 
-    if (fp == NULL || word == NULL) {
-        return false;
-    }
-
     // Get word count
-    num_words = get_word_count(fp);
+    num_words = get_word_count(fd);
 
     // Binary search
     left = 0;
@@ -33,7 +29,7 @@ bool find_word(FILE* fp, const char* word)
     while (left <= right) {
         mid = left + (right - left) / 2;
 
-        get_word(fp, mid, test);
+        get_word(fd, mid, test);
 
         // Compare
         cmp = strncmp(word, test, NUM_LETTERS);
