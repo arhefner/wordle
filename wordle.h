@@ -41,7 +41,7 @@ extern void update_guess(int index);
 extern bool replay(bool won);
 extern void show_stats(void);
 
-bool find_word(int fd, const char* word);
+bool find_word(int fd, int word_count, const char* word);
 
 extern int getch_no_echo(void);
 

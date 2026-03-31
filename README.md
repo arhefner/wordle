@@ -6,7 +6,14 @@ This is an implementation of a similar game written in C. This version was creat
 The program may be built with ELFC using the following command:
 `elfc -o wordle.elfos wordle.c board.c find_word.c getch_elfos.c`
 ## Building with gcc for linux
-The program may be built with gcc using the following command: `gcc -o wordle wordle.c board.c find_word.c itoa.c getch.c`
+The program may be built using CMake with the following commands:
+```bash
+mkdir build
+cd build
+cmake ..
+cmake --build .
+```
+Alternatively, it can be built with gcc using the following command: `gcc -o wordle wordle.c board_unibox.c find_word.c itoa.c stats.c word_file.c getch.c`
 ## Running the program
 ### Elf/OS
 1. Transfer the wordle.elfos file to a folder on elfos. You may simply name it wordle on the Elf/OS system.
@@ -15,7 +22,7 @@ The program may be built with gcc using the following command: `gcc -o wordle wo
 4. Make sure the file is executable: `chmod +x wordle`
 5. Make sure the folder is your current working directory, and execute the program.
 ### linux
-Place the executable and the four data files in the same folder, change to that folder, and run the execcutable.
+Place the executable and the four data files in the same folder, change to that folder, and run the executable.
 ## Playing the game
 The game will start by prompting for your name. The name is used as the name of a data file (with a `.wdl` extension) that will hold your progress and statistics about the game. In this way multiple people may progress through the game at their own pace and keep track of their progress.
 

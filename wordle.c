@@ -16,12 +16,14 @@ char match[NUM_LETTERS];
 
 char test[NUM_LETTERS + 1];
 
+int word_count;
+int answer_count;
+
 int main(int argc, char *argv[])
 {
     int words;
     int words_sorted;
-    int answers_a_l;
-    int answers_m_z;
+    int answers;
     char *newline_pos;
     bool done;
     bool won;
@@ -49,27 +51,25 @@ int main(int argc, char *argv[])
 
     words = open("wordlist.txt", O_RDONLY);
     if (words == -1) {
-        perror("Could not open solution list");
+        fputs("Could not open solution list", stdout);
         return 1;
     }
 
     words_sorted = open("words_sorted.txt", O_RDONLY);
     if (words_sorted == -1) {
-        perror("Could not open sorted solution list");
+        fputs("Could not open sorted solution list", stdout);
         return 1;
     }
 
-    answers_a_l = open("answers_a-l.txt", O_RDONLY);
-    if (answers_a_l == -1) {
-        perror("Could not open valid word list");
+    word_count = get_word_count(words_sorted);
+
+    answers = open("answers.txt", O_RDONLY);
+    if (answers == -1) {
+        fputs("Could not open valid word list", stdout);
         return 1;
     }
 
-    answers_m_z = open("answers_m-z.txt", O_RDONLY);
-    if (answers_m_z == -1) {
-        perror("Could not open valid word list");
-        return 1;
-    }
+    answer_count = get_word_count(answers);
 
     done = false;
 
@@ -86,9 +86,8 @@ int main(int argc, char *argv[])
             do {
                 get_guess(i);
 
-                if (find_word(words_sorted, guess) ||
-                    ((guess[0] < 'm') && find_word(answers_a_l, guess)) ||
-                    find_word(answers_m_z, guess)) {
+                if (find_word(words_sorted, word_count, guess) ||
+                    find_word(answers, answer_count, guess)) {
                     valid = true;
                 }
                 else {
@@ -147,8 +146,7 @@ int main(int argc, char *argv[])
 
     close(words);
     close(words_sorted);
-    close(answers_a_l);
-    close(answers_m_z);
+    close(answers);
 
     show_stats();
 
