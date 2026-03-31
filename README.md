@@ -4,7 +4,7 @@ The original wordle was a web-based word game written by Josh Wardle (https://en
 This is an implementation of a similar game written in C. This version was created to be used with the ELFC C compiler for RCA CDP1802 based computers hosted [here](https://github.com/fourstix/ELFC). But it can also be built for most linux-based systems, including WSL on Windows and the Raspberry Pi.
 ## Building with ELFC for Elf/OS
 The program may be built with ELFC using the following command:
-`elfc -o wordle.elfos wordle.c board.c find_word.c getch_elfos.c`
+`elfc -o wordle.elfos wordle.c board_unibox.c find_word.c stats.c getch_elfos.c word_file_elfos.c`
 ## Building with gcc for linux
 The program may be built using CMake with the following commands:
 ```bash
