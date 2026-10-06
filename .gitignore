@@ -60,3 +60,9 @@ dkms.conf
 *.lst
 *.build
 *.sym
+
+# Build output
+bin/
+
+# Player statistics
+*.wdl

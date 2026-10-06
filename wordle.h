@@ -43,8 +43,6 @@ extern void show_stats(void);
 
 bool find_word(int fd, int word_count, const char* word);
 
-extern int getch_no_echo(void);
-
 extern void itoa(int num, char* str);
 
 #endif // _WORDLE_H_

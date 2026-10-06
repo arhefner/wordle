@@ -9,22 +9,32 @@ int get_word_count(int fd)
     int32_t num_words;
     int32_t line_size;
     int32_t zero;
-    char buffer[12];
+#ifndef __ELFDOS__
+    char *fildes;
+#endif
 
-    zero = to_int32(0);
+    zero = i32_from_int(0);
 
     // Get file size
     file_size = lseek32(fd, zero, SEEK_END);
 
-    error = to_int32(-1);
+    error = i32_from_int(-1);
 
-    if (cmp32(file_size, error) == 0) {
+    if (cmpi32(file_size, error) == 0) {
         return -1;
     }
 
-    line_size = to_int32(NUM_LETTERS + 1);
+#ifndef __ELFDOS__
+    // Elf/OS v5 returns a sector number from a seek rather than the
+    // position, so read the position from the file descriptor instead
+    fildes = (char *)_fildes(fd);
+    file_size.high = ((fildes[0] & 0xFF) << 8) | (fildes[1] & 0xFF);
+    file_size.low = ((fildes[2] & 0xFF) << 8) | (fildes[3] & 0xFF);
+#endif
 
-    num_words = div32(file_size, line_size, NULL);
+    line_size = i32_from_int(NUM_LETTERS + 1);
+
+    num_words = divi32(file_size, line_size, NULL);
 
     return num_words.low;
 }
@@ -100,10 +110,22 @@ void get_word(int fd, int pos, char *buf)
     asm("         ghi  r8         ;");
     asm("         adc             ;");
     asm("         phi  r8         ;");
+#ifdef __ELFDOS__
+    asm("         push r7         ; save registers used by");
+    asm("         push r9         ; the compiler before");
+    asm("         push rb         ; calling the kernel");
+    asm("         copy rf, r9     ; set low offset for K_FILE_SEEK");
+    asm("         copy r8, ra     ; set high offset for K_FILE_SEEK");
+    asm("         call K_FILE_SEEK ; attempt to seek within file");
+    asm("         pop  rb         ; restore registers");
+    asm("         pop  r9         ;");
+    asm("         pop  r7         ;");
+#else
     asm("         push r7         ; save stack pointer before setting low offset");
     asm("         copy rf, r7     ; set low offset for O_SEEK");
     asm("         call O_SEEK     ; attempt to seek within file");
     asm("         pop  r7         ; restore stack pointer");
+#endif
 
     // Read into buffer
     bytes_read = read(fd, buf, NUM_LETTERS);

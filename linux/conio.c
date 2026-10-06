@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <termios.h>
+#include "conio.h"
 
-int getch_no_echo(void)
+int getch(void)
 {
     struct termios oldt, newt;
     int ch;
+
+    // Show any pending output before waiting for a key
+    fflush(stdout);
 
     // Get current terminal attributes and save them
     tcgetattr(STDIN_FILENO, &oldt);
@@ -26,4 +30,25 @@ int getch_no_echo(void)
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 
     return ch;
+}
+
+int putch(int ch)
+{
+    return putchar(ch);
+}
+
+int cputs(const char *s)
+{
+    return fputs(s, stdout);
+}
+
+void clrscr(void)
+{
+    // Erase the screen and home the cursor
+    fputs("\x1b[2J\x1b[H", stdout);
+}
+
+void gotoxy(int x, int y)
+{
+    printf("\x1b[%d;%dH", y, x);
 }

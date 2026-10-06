@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <conio.h>
 #include "wordle.h"
 
 #define ROW_ORIGIN      2
@@ -7,66 +8,51 @@
 #define COL_NEXT        4
 
 #define ESC             '\x1b'
-#define CLEAR_SCREEN    "\x1b[2J"
 #define HOME            "\x1b[H"
 
 #define NORMAL          "\x1b[0m"
 #define BOLD            "\x1b[1m"
 #define UNDERLINE       "\x1b[4m"
-#define BLINK           "\x1b[5m"
 #define REVERSE         "\x1b[7m"
 
 static int row;
 static int col;
 static int guess_col;
 
-static void set_cursor(int row, int col)
-{
-    static char buffer[5];
-
-    fputs("\x1b[", stdout);
-    itoa(row, buffer);
-    fputs(buffer, stdout);
-    fputc(';', stdout);
-    itoa(col, buffer);
-    fputs(buffer, stdout);
-    fputc('H', stdout);
-}
-
 static void draw_line(char start, char middle, char end)
 {
     int i;
 
-    fputc(start, stdout);
+    putch(start);
     for (i = 0; i < (NUM_LETTERS - 1); i++) {
-        fputs("\x71\x71\x71", stdout);
-        fputc(middle, stdout);
+        cputs("\x71\x71\x71");
+        putch(middle);
     }
-    fputs("\x71\x71\x71", stdout);
-    fputc(end, stdout);
-    fputs("\r\n", stdout);
+    cputs("\x71\x71\x71");
+    putch(end);
+    cputs("\r\n");
 }
 
 static void draw_row(void)
 {
     int i;
 
-    fputc('\x78', stdout);
+    putch('\x78');
     for (i = 0; i < NUM_LETTERS; i++) {
-        fputs("   \x78", stdout);
+        cputs("   \x78");
     }
-    fputs("\r\n", stdout);
+    cputs("\r\n");
 }
 
 void draw_board(void)
 {
     int i;
-    fputs(CLEAR_SCREEN, stdout);
-    fputs(HOME, stdout);
+    clrscr();
+    cputs(HOME);
 
-    fputs("\x1b(B", stdout);
-    fputs("\x1b)0", stdout);
-    fputc('\x0e', stdout);
+    cputs("\x1b(B");
+    cputs("\x1b)0");
+    putch('\x0e');
 
     draw_line('\x6c', '\x77', '\x6b');
     for (i = 0; i < (NUM_GUESSES - 1); i++) {
@@ -76,7 +62,7 @@ void draw_board(void)
     draw_row();
     draw_line('\x6d', '\x76', '\x6a');
 
-    fputc('\x0f', stdout);
+    putch('\x0f');
 }
 
 void get_guess(int index)
@@ -95,16 +81,16 @@ void get_guess(int index)
 
     guess[NUM_LETTERS] = '\0';
 
-    fputs(NORMAL, stdout);
+    cputs(NORMAL);
 
     guess_col = 0;
     done = false;
     escape = false;
 
     while (!done) {
-        set_cursor(row, col);
+        gotoxy(col, row);
 
-        ch = getch_no_echo();
+        ch = getch();
 
         if (escape) {
             if ((ch != '[') && (ch != 'O')) {
@@ -113,7 +99,7 @@ void get_guess(int index)
                     if (guess_col < (NUM_LETTERS - 1)) {
                         guess_col++;
                         col += COL_NEXT;
-                        set_cursor(row, col);
+                        gotoxy(col, row);
                     }
                 }
                 else if (ch == 'D') {
@@ -121,7 +107,7 @@ void get_guess(int index)
                     if (guess_col > 0) {
                         guess_col--;
                         col -= COL_NEXT;
-                        set_cursor(row, col);
+                        gotoxy(col, row);
                     }
                 }
 
@@ -138,14 +124,14 @@ void get_guess(int index)
             if (guess_col > 0) {
                 guess_col--;
                 col -= COL_NEXT;
-                set_cursor(row, col);
-                fputc(' ', stdout);
-                set_cursor(row, col);
+                gotoxy(col, row);
+                putch(' ');
+                gotoxy(col, row);
             }
         }
         else {
             if (isalpha(ch) && (guess_col < NUM_LETTERS)) {
-                fputc(toupper(ch), stdout);
+                putch(toupper(ch));
                 guess[guess_col++] = tolower(ch);
                 col += COL_NEXT;
             }
@@ -164,12 +150,12 @@ void clear_guess(int index)
         row += ROW_NEXT;
     }
 
-    fputs(NORMAL, stdout);
+    cputs(NORMAL);
 
     for (i = 0; i < NUM_LETTERS; i++) {
         guess[i] = ' ';
-        set_cursor(row, col);
-        fputc(' ', stdout);
+        gotoxy(col, row);
+        putch(' ');
         col += COL_NEXT;
     }
 }
@@ -185,17 +171,17 @@ void update_guess(int index)
     }
 
     for (i = 0; i < NUM_LETTERS; i++) {
-        set_cursor(row, col - 1);
+        gotoxy(col - 1, row);
         if (match[i] == HIT) {
-            fputs(REVERSE, stdout);
+            cputs(REVERSE);
         }
         else if (match[i] == NEAR_MISS) {
-            fputs(UNDERLINE, stdout);
+            cputs(UNDERLINE);
         }
-        fputc(' ', stdout);
-        fputc(toupper(guess[i]), stdout);
-        fputc(' ', stdout);
-        fputs(NORMAL, stdout);
+        putch(' ');
+        putch(toupper(guess[i]));
+        putch(' ');
+        cputs(NORMAL);
         col += COL_NEXT;
     }
 }
@@ -212,19 +198,19 @@ bool replay(bool won)
     }
 
     col = 0;
-    set_cursor(row, col);
+    gotoxy(col, row);
 
     if (won) {
-        fputs("Congratulations!\r\n", stdout);
+        cputs("Congratulations!\r\n");
     }
     else {
-        fputs("Sorry, it was '", stdout);
-        fputs(word, stdout);
-        fputs("'.\r\n", stdout);
+        cputs("Sorry, it was '");
+        cputs(word);
+        cputs("'.\r\n");
     }
 
-    fputs("Play again (Y/N)? ", stdout);
-    ch = getch_no_echo();
+    cputs("Play again (Y/N)? ");
+    ch = getch();
     return (toupper(ch) == 'Y');
 }
 
@@ -233,33 +219,33 @@ void show_stats(void)
     char buffer[10];
     int percentage;
 
-    fputs(CLEAR_SCREEN, stdout);
-    fputs(HOME, stdout);
+    clrscr();
+    cputs(HOME);
 
-    fputs("Games played: ", stdout);
+    cputs("Games played: ");
     itoa(stats.num_played, buffer);
-    fputs(buffer, stdout);
-    fputs("\r\n", stdout);
+    cputs(buffer);
+    cputs("\r\n");
 
-    fputs("Games won: ", stdout);
+    cputs("Games won: ");
     itoa(stats.num_won, buffer);
-    fputs(buffer, stdout);
-    fputs("\r\n", stdout);
+    cputs(buffer);
+    cputs("\r\n");
 
     percentage = (stats.num_won * 100) / stats.num_played;
 
-    fputs("Win Percentage: ", stdout);
+    cputs("Win Percentage: ");
     itoa(percentage, buffer);
-    fputs(buffer, stdout);
-    fputs("%\r\n", stdout);
+    cputs(buffer);
+    cputs("%\r\n");
 
-    fputs("Current Streak: ", stdout);
+    cputs("Current Streak: ");
     itoa(stats.current_streak, buffer);
-    fputs(buffer, stdout);
-    fputs("\r\n", stdout);
+    cputs(buffer);
+    cputs("\r\n");
 
-    fputs("Max Streak: ", stdout);
+    cputs("Max Streak: ");
     itoa(stats.max_streak, buffer);
-    fputs(buffer, stdout);
-    fputs("\r\n", stdout);
+    cputs(buffer);
+    cputs("\r\n");
 }
