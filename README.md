@@ -26,6 +26,8 @@ The Makefile runs the following commands, shown here for the Unicode board:
 The `linux` folder holds a minimal version of the ElfC `conio.h` library, with only the functions this program uses.
 ## Running the program
 ### Elf/OS
+On Elf/OS v5, kernel build 229 (version 5.1.1) or later is required. Earlier v5 kernels return the wrong value from `O_SEEK`, which causes every guess to be rejected as not a valid word.
+
 1. Transfer the wordle.elfos file to a folder on elfos. You may simply name it wordle on the Elf/OS system.
 2. Transfer the data files (the three files with a `.txt` extension) to the same folder.
 3. Make sure terminal echo is on: `echoon`

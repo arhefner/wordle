@@ -9,9 +9,6 @@ int get_word_count(int fd)
     int32_t num_words;
     int32_t line_size;
     int32_t zero;
-#ifndef __ELFDOS__
-    char *fildes;
-#endif
 
     zero = i32_from_int(0);
 
@@ -23,14 +20,6 @@ int get_word_count(int fd)
     if (cmpi32(file_size, error) == 0) {
         return -1;
     }
-
-#ifndef __ELFDOS__
-    // Elf/OS v5 returns a sector number from a seek rather than the
-    // position, so read the position from the file descriptor instead
-    fildes = (char *)_fildes(fd);
-    file_size.high = ((fildes[0] & 0xFF) << 8) | (fildes[1] & 0xFF);
-    file_size.low = ((fildes[2] & 0xFF) << 8) | (fildes[3] & 0xFF);
-#endif
 
     line_size = i32_from_int(NUM_LETTERS + 1);
 
